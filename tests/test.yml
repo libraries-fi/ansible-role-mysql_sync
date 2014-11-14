@@ -1,0 +1,51 @@
+---
+- hosts: default
+  remote_user: root
+  roles:
+    - role: Ansibles.mysql
+      mysql_root_password: 'pass'
+  tasks:
+    - name: Create test databases.
+      mysql_db:
+        name: "{{ item }}"
+        # collation: utf8_general_ci
+        # encoding: utf8
+        # target: /usr/share/mysql/fill_help_tables.sql
+        state: present
+      with_items:
+          - sakila_source
+          - sakila_target
+
+    - name: Download mysql sample database "sakila".
+      get_url:
+        url: http://downloads.mysql.com/docs/sakila-db.tar.gz
+        dest: /tmp/sakila-db.tar.gz
+
+    - name: Unpack sakila
+      unarchive:
+        copy: no
+        src: /tmp/sakila-db.tar.gz
+        dest: /tmp/
+        creates: /tmp/sakila-db/sakila-schema.sql
+
+
+    - name: Create a test database.
+      mysql_db:
+        name: sakila_source
+        collation: utf8_general_ci
+        encoding: utf8
+        target:  /tmp/sakila-db/sakila-schema.sql
+        state: import
+
+- hosts: default
+  remote_user: root
+  tasks:
+  roles:
+    - role: ajsalminen.mysql_sync
+      mysql_sync_config:
+        - source:
+            host: "{{ inventory_hostname }}"
+            name: sakila_source
+          target:
+            host: "{{ inventory_hostname }}"
+            name: sakila_target
