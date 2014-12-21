@@ -1,6 +1,10 @@
 ---
 # tasks file for ajsalminen.mysql_sync
 
+- name: Print statements during execution
+  debug: var=mysql_sync_config
+
+
 - name: Dump database structure on source.
   shell: >
     mysqldump {{ item.database }}
@@ -8,6 +12,7 @@
     > {{ mysql_sync_dump_dir }}/{{ item.database }}.sql
   delegate_to: "{{ item.source }}"
   with_items: mysql_sync_config
+  sudo: "{{ mysql_sync_source_sudo }}"
 
 - name: Dump database on source.
   shell: >
@@ -16,6 +21,7 @@
     >> {{ mysql_sync_dump_dir }}/{{ item.database }}.sql
   delegate_to: "{{ item.source }}"
   with_items: mysql_sync_config
+  sudo: "{{ mysql_sync_source_sudo }}"
 
 - name: Copy dump to control machine.
   command: >
