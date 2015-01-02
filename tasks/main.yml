@@ -1,10 +1,6 @@
 ---
 # tasks file for ajsalminen.mysql_sync
 
-- name: Print statements during execution
-  debug: var=mysql_sync_config
-
-
 - name: Dump database structure on source.
   shell: >
     mysqldump {{ item.database }}
