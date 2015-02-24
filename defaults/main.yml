@@ -1,4 +1,5 @@
 ---
 # defaults file for ajsalminen.mysql_sync
 mysql_sync_dump_dir: /tmp
+mysql_sync_remote_user: root
 sudo: no

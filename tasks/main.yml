@@ -7,8 +7,10 @@
     --no-data
     > {{ mysql_sync_dump_dir }}/{{ item.database }}.sql
   delegate_to: "{{ item.source }}"
+  remote_user: "{{ mysql_sync_remote_user }}"
   with_items: mysql_sync_config
   sudo: "{{ mysql_sync_source_sudo }}"
+  always_run: yes
 
 - name: Dump database on source.
   shell: >
@@ -16,8 +18,10 @@
     {{ item.skip_tables|default('')|join(' --ignore-table ' ~ item.database ~ '.')|regex_replace('^(.)', ' --ignore-table ' ~ item.database ~ '.' ~ '\\1')}}
     >> {{ mysql_sync_dump_dir }}/{{ item.database }}.sql
   delegate_to: "{{ item.source }}"
+  remote_user: "{{ mysql_sync_remote_user }}"
   with_items: mysql_sync_config
   sudo: "{{ mysql_sync_source_sudo }}"
+  always_run: yes
 
 - name: Copy dump to control machine.
   command: >
@@ -27,6 +31,7 @@
     {{ mysql_sync_dump_dir }}/{{ item.database }}.sql
   delegate_to: localhost
   with_items: mysql_sync_config
+  always_run: yes
 
 - name: Copy dump to target machine.
   synchronize:
