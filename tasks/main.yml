@@ -32,6 +32,7 @@
   delegate_to: localhost
   with_items: mysql_sync_config
   always_run: yes
+  sudo: no
 
 - name: Copy dump to target machine.
   synchronize:
