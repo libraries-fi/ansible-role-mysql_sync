@@ -116,6 +116,7 @@ galaxy_info:
   #- packaging
   #- system
   #- web
+allow_duplicates: yes
 dependencies: []
   # List your role dependencies here, one per line. Only
   # dependencies available via galaxy should be listed here.
