@@ -5,29 +5,31 @@
   shell: >
     mysqldump {{ item.database }}
     --no-data
-    > {{ mysql_sync_dump_dir }}/{{ item.database }}.sql
+    > {{ mysql_sync_source_dump_dir }}/{{ item.database }}.sql
   delegate_to: "{{ item.source }}"
   remote_user: "{{ mysql_sync_remote_user }}"
   with_items: mysql_sync_config
   sudo: "{{ mysql_sync_source_sudo }}"
   always_run: yes
+  when: mysql_sync_create_dump|default(true)
 
 - name: Dump database on source.
   shell: >
     mysqldump {{ item.database }}
     {{ item.skip_tables|default('')|join(' --ignore-table ' ~ item.database ~ '.')|regex_replace('^(.)', ' --ignore-table ' ~ item.database ~ '.' ~ '\\1')}}
-    >> {{ mysql_sync_dump_dir }}/{{ item.database }}.sql
+    >> {{ mysql_sync_source_dump_dir }}/{{ item.database }}.sql
   delegate_to: "{{ item.source }}"
   remote_user: "{{ mysql_sync_remote_user }}"
   with_items: mysql_sync_config
   sudo: "{{ mysql_sync_source_sudo }}"
   always_run: yes
+  when: mysql_sync_create_dump|default(true)
 
 - name: Copy dump to control machine.
   command: >
     rsync --delay-updates --compress --archive
     --out-format='{{changed_marker}}%i %n%L'
-    {{hostvars[item.source].ansible_ssh_user|default(ansible_ssh_user)}}@{{item.source}}:{{ mysql_sync_dump_dir }}/{{ item.database }}.sql
+    {{hostvars[item.source].ansible_ssh_user|default(ansible_ssh_user)}}@{{item.source}}:{{ mysql_sync_source_dump_dir }}/{{ item.database }}.sql
     {{ mysql_sync_dump_dir }}/{{ item.database }}.sql
   delegate_to: localhost
   with_items: mysql_sync_config
