@@ -8,7 +8,6 @@
   delegate_to: "{{ item.source }}"
   remote_user: "{{ mysql_sync_remote_user }}"
   with_items: mysql_sync_config
-  sudo: "{{ mysql_sync_source_sudo }}"
   always_run: yes
   when: mysql_sync_create_dump|default(true)
 
@@ -20,6 +19,5 @@
   delegate_to: "{{ item.source }}"
   remote_user: "{{ mysql_sync_remote_user }}"
   with_items: mysql_sync_config
-  sudo: "{{ mysql_sync_source_sudo }}"
   always_run: yes
   when: mysql_sync_create_dump|default(true)
