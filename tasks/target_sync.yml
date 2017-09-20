@@ -3,14 +3,14 @@
 - name: Copy files from source to target.
   shell: "rsync --delay-updates --compress --archive --out-format='{{changed_marker}}%i %n%L' {{hostvars[item.source].ansible_ssh_user|default(ansible_ssh_user)}}@{{item.source}}:{{ mysql_sync_source_dump_dir }}/{{ item.database }}.sql {{ mysql_sync_dump_dir }}/{{ item.database }}.sql"
   always_run: yes
-  with_items: mysql_sync_config
+  with_items: "{{ mysql_sync_config }}"
 
 - name: Drop database on target.
   mysql_db:
     name: "{{ item.0.target_database|default(item.0.database) }}"
     state: "{{ item.1 }}"
   with_nested:
-    - mysql_sync_config
+    - "{{ mysql_sync_config }}"
     - [ absent, present ]
 
 - name: Import database on target.
@@ -18,4 +18,4 @@
     name: "{{ item.target_database|default(item.database) }}"
     state: import
     target: "{{ mysql_sync_dump_dir }}/{{ item.database }}.sql"
-  with_items: mysql_sync_config
+  with_items: "{{ mysql_sync_config }}"
