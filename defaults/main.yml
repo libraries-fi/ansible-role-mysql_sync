@@ -3,5 +3,5 @@
 mysql_sync_dump_dir: /tmp
 mysql_sync_source_dump_dir: /tmp
 mysql_sync_remote_user: root
-sudo: no
+become: no
 changed_marker: '<<CHANGED>>'
