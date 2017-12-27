@@ -8,7 +8,7 @@
   delegate_to: "{{ item.source }}"
   remote_user: "{{ mysql_sync_remote_user }}"
   with_items: "{{ mysql_sync_config }}"
-  always_run: yes
+  check_mode: no
   when: mysql_sync_create_dump|default(true)
 
 - name: Dump database on source.
@@ -19,5 +19,5 @@
   delegate_to: "{{ item.source }}"
   remote_user: "{{ mysql_sync_remote_user }}"
   with_items: "{{ mysql_sync_config }}"
-  always_run: yes
+  check_mode: no
   when: mysql_sync_create_dump|default(true)
