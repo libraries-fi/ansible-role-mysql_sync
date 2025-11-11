@@ -4,7 +4,7 @@
   command: >
     rsync {{ '--remove-source-files' if mysql_sync_delete_dump is defined else '' }} --delay-updates --compress --archive
     --out-format='{{changed_marker}}%i %n%L'
-    {{hostvars[item.source].ansible_ssh_user|default(ansible_ssh_user)}}@{{item.source}}:{{ mysql_sync_source_dump_dir }}/{{ item.database }}.sql.compressed
+    {{hostvars[item.source + '.prod'].ansible_user|default(ansible_user)}}@{{hostvars[item.source + '.prod'].ansible_host}}:{{ mysql_sync_source_dump_dir }}/{{ item.database }}.sql.compressed
     {{ mysql_sync_dump_dir }}/{{ item.database }}.sql.compressed
   delegate_to: localhost
   with_items: "{{ mysql_sync_config }}"

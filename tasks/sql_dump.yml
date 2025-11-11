@@ -5,7 +5,7 @@
     mysqldump {{ item.database }}
     --no-data
     > {{ mysql_sync_source_dump_dir }}/{{ item.database }}_struc.sql
-  delegate_to: "{{ item.source }}"
+  delegate_to: "{{ item.source }}.prod"
   remote_user: "{{ mysql_sync_remote_user }}"
   with_items: "{{ mysql_sync_config }}"
   check_mode: no
@@ -19,7 +19,7 @@
     {{ item.skip_tables|default('')|join(' --ignore-table ' ~ item.database ~ '.')|regex_replace('^(.)', ' --ignore-table ' ~ item.database ~ '.' ~ '\\1')}};
     } | {{ mysql_sync_compress_cmd | default(mysql_sync_default_compress_commands[mysql_sync_compress_method]['compress_cmd']) }}
     {{ mysql_sync_compress_args | default('') }} > {{ mysql_sync_source_dump_dir }}/{{ item.database }}.sql.compressed
-  delegate_to: "{{ item.source }}"
+  delegate_to: "{{ item.source }}.prod"
   remote_user: "{{ mysql_sync_remote_user }}"
   with_items: "{{ mysql_sync_config }}"
   check_mode: no
