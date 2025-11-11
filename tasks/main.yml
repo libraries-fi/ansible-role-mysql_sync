@@ -1,11 +1,11 @@
 ---
 # tasks file for ajsalminen.mysql_sync
 
-- include: sql_dump.yml
+- include_tasks: sql_dump.yml
 
-- include: control_host_sync.yml
+- include_tasks: control_host_sync.yml
   when: file_sync_no_controlhost is not defined
 
 # To use this, set "forward-agent 'yes'" to ssh-config, or set up separate keys for nodes connecting to each other.
-- include: target_sync.yml
+- include_tasks: target_sync.yml
   when: file_sync_no_controlhost is defined
